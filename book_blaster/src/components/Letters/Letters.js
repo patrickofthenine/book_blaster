@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Letter from './Letter/Letter';
 
 const Letters = (props) => {
@@ -6,11 +6,11 @@ const Letters = (props) => {
 	let meshes = props.letters.map( letter => {
 		return <Letter key={letter.id} {...letter} />
 	})
+	
+	letters.current = useState({'letters':meshes})
 
 	return (
-		<letters ref={letters}>
-			{meshes}
-		</letters>
+		<letters ref={letters} {...letters.current} />
 	)
 }
 

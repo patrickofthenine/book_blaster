@@ -69,6 +69,7 @@ const Scene = () => {
 	};
 
 	const rotateMeshes = () => {
+		console.log('should rotate', Date.now())
 		let rotated = sceneState.letters.map( (mesh)=>{
 			let spin = Math.random()
 			while(mesh.position){
@@ -79,21 +80,22 @@ const Scene = () => {
 	};
 
 	const text = `
-		I am aware that down to the present time, the fish styled Lamatins and
-		Dugongs (Pig-fish and Sow-fish of the Coffins of Nantucket) are
-		included by many naturalists among the whales. But as these pig-fish
+		CHAPTER 1. Loomings.
+		Call me Ishmael. Some years ago—never mind how long precisely—having
+		little or no money in my purse, and nothing particular to interest me
+		on shore, I thought I would sail about a little and see the watery part
+		of the world. It is a way I have of driving off the spleen and
+		regulating the circulation.
 	`;
-	const words 	= generateConfigs(getGroupings(text));
-	const letters = generateConfigs(getSingles(text));
 
+	const singles 	= generateConfigs(getSingles(text));
 	const [sceneState, setSceneState] = useState({
-		letters: letters
+		letters: singles
 	});
 	
 	useFrame( ()=> {rotateMeshes() })
 	return(
-		<Letters letters={sceneState.letters}>
-		</Letters>
+		<Letters key={Date.now()**Date.now()} letters={sceneState.letters}/>
 	);
 }
 
