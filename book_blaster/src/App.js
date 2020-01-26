@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Canvas } from 'react-three-fiber'
 import Scene from './Scene/Scene'
 
-const App = (props) => {
-  return (
-      <Canvas>
-          <Scene/>
-      </Canvas>
-  )
+class App extends Component {
+	render(){
+		return (
+		      <Canvas>
+			  		<ambientLight />
+			      	<Scene/>
+		      </Canvas>
+		)
+	}
 }
 
 export default App;
