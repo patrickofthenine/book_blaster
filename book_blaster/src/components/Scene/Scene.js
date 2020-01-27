@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useFrame } from 'react-three-fiber';
+import { Canvas } from 'react-three-fiber'
 import Letters from '../Letters/Letters';
 
-const Scene = () => {
-
+const Scene = props => {
 	const getGroupings = (blob) => {
 		blob = ( typeof(blob) === 'string' ) ? blob : false;
 		return blob
@@ -45,7 +44,7 @@ const Scene = () => {
 			//config parameters
 			let active = pool[Math.floor(Math.random()*( pool.length))]
 			let value = char;
-			let max = window.innerHeight * window.innerWidth;
+			let max = window.innerHeight/10;
 			let position = [];
 			let i = 0;
 			while(i<3){ //3 for x,y,z
@@ -63,7 +62,7 @@ const Scene = () => {
 			return {
 				active: 	active,
 				color: 		color,
-				id: 		id,
+				key: 		id,
 				position: 	position,
 				scale: 		scale,
 				value: 		value,
@@ -78,29 +77,25 @@ const Scene = () => {
 			mesh.position = mesh.position.map( (m)=>{ return m+spin })
 			return mesh;
 		});
-		return setSceneState({'letters':rotated})
+
+		return rotated
 	};
 
 	const text = `
 		CHAPTER 1. Loomings.
-		Call me Ishmael. Some years ago—never mind how long precisely—having
-		little or no money in my purse, and nothing particular to interest me
-		on shore, I thought I would sail about a little and see the watery part
-		of the world. It is a way I have of driving off the spleen and
-		regulating the circulation.
+		Call me Ishmael. 
 	`;
 
 	const singles 	= generateConfigs(getSingles(text));
-
 	const [sceneState, setSceneState] = useState({
 		letters: singles
-
 	});
-	useFrame( ()=>{ rotateMeshes() })
+
 	return (
-		<ambientLight>
-		{sceneState.letters}
-		</ambientLight>
+		<Canvas>
+			<ambientLight/>
+			<Letters letters={sceneState.letters}/>
+		</Canvas>
 	)
 }
 
