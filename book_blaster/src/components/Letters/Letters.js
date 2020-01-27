@@ -1,16 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import Letter from './Letter/Letter';
 
 const Letters = (props) => {
-	let letters = useRef();
 	let meshes = props.letters.map( letter => {
-		return <Letter key={letter.id} {...letter} />
+		return <Letter {...letter} />
 	})
 	
-	letters.current = useState({'letters':meshes})
-
 	return (
-		<letters ref={letters} {...letters.current} />
+		<letters>
+		{meshes}
+		</letters>
 	)
 }
 

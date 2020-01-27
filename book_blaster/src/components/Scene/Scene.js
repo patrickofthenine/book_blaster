@@ -1,15 +1,19 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useFrame } from 'react-three-fiber';
 import Letters from '../Letters/Letters';
 
 const Scene = () => {
+
 	const getGroupings = (blob) => {
 		blob = ( typeof(blob) === 'string' ) ? blob : false;
 		return blob
 			.split('\n')
 			.map( (group)=>{ return group.trim().split(' ') } )
 			.flat()
-			.filter( (g)=>{ if(g.length > 0){return g}; return; });
+			.filter( (g)=>{ 
+				if(g.length > 0){return g};
+				return false;
+			});
 	};
 
 	const getSingles = (blob) => {
@@ -41,7 +45,7 @@ const Scene = () => {
 			//config parameters
 			let active = pool[Math.floor(Math.random()*( pool.length))]
 			let value = char;
-			let max = unconfigured.length;
+			let max = window.innerHeight * window.innerWidth;
 			let position = [];
 			let i = 0;
 			while(i<3){ //3 for x,y,z
@@ -52,9 +56,9 @@ const Scene = () => {
 			}
 			let color = colors[Math.floor(Math.random()*colors.length )]
 			let scale = [
-				3*Math.floor(2*Math.random())+1, 
-				3*Math.floor(2*Math.random())+1, 
-				3*Math.floor(2*Math.random())+1
+				1*Math.floor(2*Math.random())+1, 
+				1*Math.floor(2*Math.random())+1, 
+				1*Math.floor(2*Math.random())+1
 			];
 			return {
 				active: 	active,
@@ -69,14 +73,12 @@ const Scene = () => {
 	};
 
 	const rotateMeshes = () => {
-		console.log('should rotate', Date.now())
 		let rotated = sceneState.letters.map( (mesh)=>{
-			let spin = Math.random()
-			while(mesh.position){
-				mesh.position += spin;
-			};
+			let spin = Math.floor(5*Math.random()+1)
+			mesh.position = mesh.position.map( (m)=>{ return m+spin })
+			return mesh;
 		});
-		return setSceneState({'letters':rotated});
+		return setSceneState({'letters':rotated})
 	};
 
 	const text = `
@@ -89,14 +91,17 @@ const Scene = () => {
 	`;
 
 	const singles 	= generateConfigs(getSingles(text));
+
 	const [sceneState, setSceneState] = useState({
 		letters: singles
+
 	});
-	
-	useFrame( ()=> {rotateMeshes() })
-	return(
-		<Letters key={Date.now()**Date.now()} letters={sceneState.letters}/>
-	);
+	useFrame( ()=>{ rotateMeshes() })
+	return (
+		<ambientLight>
+		{sceneState.letters}
+		</ambientLight>
+	)
 }
 
 export default Scene;

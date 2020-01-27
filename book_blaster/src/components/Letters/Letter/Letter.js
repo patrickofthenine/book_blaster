@@ -1,14 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 
 const Letter = (props) => {
-	let letter = useRef();
-	letter.current = useState(props)
-	
+	let letter = useRef()
 	return (
-		<letter key={letter.current.id} ref={letter} {...letter.current}>
-			<boxBufferGeometry attach="geometry" args={letter.current.scale}/>
-			<meshStandardMaterial attach="material" color={letter.current.color}/>
-		</letter>
+		<letter ref={letter} {...props}></letter>
 	)
 };
 
