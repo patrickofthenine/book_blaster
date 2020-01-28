@@ -1,9 +1,8 @@
-import React, { useRef } from 'react'
+import React from 'react'
 
 function Letter(props){
-	let letter = useRef()
 	let mesh = (
-		<mesh ref={letter} {...props}>
+		<mesh {...props}>
 			<boxBufferGeometry attach="geometry" args={[1,1,1]}/>
 		</mesh>
 	)

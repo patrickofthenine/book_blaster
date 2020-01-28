@@ -16,7 +16,7 @@ function Box(props) {
   return (
     <mesh
       ref={mesh}
-      onPointerOut={e => setHover(false)}>
+     >
       <boxBufferGeometry attach="geometry" args={[2, 2, 2]} />
     </mesh>
   )
@@ -79,7 +79,6 @@ const Scene = props => {
 				2*Math.floor(2*Math.random())+1, 
 				2*Math.floor(2*Math.random())+1
 			];
-			console.log(position)
 			return {
 				visible: 	active,
 				color: 		color,
@@ -92,40 +91,35 @@ const Scene = props => {
 		return configured;
 	};
 
-	const rotateLetters = () => {
-		let rotated = sceneState.letters.map( (letter)=>{
-			console.log('letter', letter)
-			return letter;
-		});
-		return setSceneState({'letterConfigs':rotated})
-	};
-
 	const getLetters = (configs) => { 
-			configs = (configs) ? configs : sceneState.letterConfigs;
 			return configs.map( (config) => {
-				return <Letter position={[5,5,-10]} {...config}/>
+				return <Letter {...config}/>
 			})
 	};
+
+	const updateLetters = () => {
+		let letters = ''
+	}
+
 	const text = `
 		CHAPTER 1. Loomings.
 		Call me Ishmael. 
 	`;
 
 	const startupConfigs = generateConfigs(getSingles(text));
-	const startupLetters = getLetters(startupConfigs);
+	const letters = getLetters(startupConfigs);
+	
 	const [sceneState, setSceneState] = useState({
-		letterConfigs: startupConfigs,
-		letters: startupLetters
+		letters: letters
 	});
 
-	useFrame( ()=>{ rotateLetters() });
+	//useFrame( ()=>{ rotateLetters() });
 
 	let scene = useRef()
-	let letters = getLetters()
-	console.log('letters', letters)
 	return (
 		<scene>
-		{letters}
+		<Box/>
+		{sceneState.letters}
 		</scene>
 	)
 }
