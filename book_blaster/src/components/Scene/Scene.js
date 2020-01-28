@@ -1,6 +1,26 @@
-import React, { useState } from 'react';
-import { Canvas } from 'react-three-fiber'
-import Letters from '../Letters/Letters';
+import React, { useRef, useState } from 'react';
+import { useFrame } from 'react-three-fiber';
+import Letter from '../Letters/Letter/Letter';
+
+function Box(props) {
+  // This reference will give us direct access to the mesh
+  const mesh = useRef()
+  
+  // Set up state for the hovered and active state
+  const [hovered, setHover] = useState(false)
+  const [active, setActive] = useState(false)
+  
+  // Rotate mesh every frame, this is outside of React without overhead
+  useFrame(() => (mesh.current.rotation.x = mesh.current.rotation.y += 0.01))
+  
+  return (
+    <mesh
+      ref={mesh}
+      onPointerOut={e => setHover(false)}>
+      <boxBufferGeometry attach="geometry" args={[2, 2, 2]} />
+    </mesh>
+  )
+}
 
 const Scene = props => {
 	const getGroupings = (blob) => {
@@ -44,7 +64,7 @@ const Scene = props => {
 			//config parameters
 			let active = pool[Math.floor(Math.random()*( pool.length))]
 			let value = char;
-			let max = window.innerHeight/10;
+			let max = 10;
 			let position = [];
 			let i = 0;
 			while(i<3){ //3 for x,y,z
@@ -71,31 +91,41 @@ const Scene = props => {
 		return configured;
 	};
 
-	const rotateMeshes = () => {
-		let rotated = sceneState.letters.map( (mesh)=>{
+	const rotateLetters = () => {
+		let rotated = sceneState.letterConfigs.map( (letter)=>{
 			let spin = Math.floor(5*Math.random()+1)
-			mesh.position = mesh.position.map( (m)=>{ return m+spin })
-			return mesh;
+			letter.position = letter.position.map( (m)=>{ return m+spin })
+			return letter;
 		});
-
-		return rotated
+		return setSceneState({'letterConfigs':rotated})
 	};
 
+	const getLetters = (configs) => { 
+			configs = (configs) ? configs : sceneState.letterConfigs;
+			return configs.map( (config) => {
+				return <Letter {...config}/>
+			})
+	};
 	const text = `
 		CHAPTER 1. Loomings.
 		Call me Ishmael. 
 	`;
 
-	const singles 	= generateConfigs(getSingles(text));
+	const startupConfigs = generateConfigs(getSingles(text));
+	const startupLetters = getLetters(startupConfigs);
 	const [sceneState, setSceneState] = useState({
-		letters: singles
+		letterConfigs: startupConfigs,
+		letters: startupLetters
 	});
 
+	useFrame( ()=>{ rotateLetters() });
+
+	let scene = useRef()
+	let letters = getLetters()
 	return (
-		<Canvas>
-			<ambientLight/>
-			<Letters letters={sceneState.letters}/>
-		</Canvas>
+		<scene>
+		{letters}
+		</scene>
 	)
 }
 
