@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
-import Letter from '../Letters/Letter/Letter';
+import Letter from '../Letter/Letter';
 
 function Box(props) {
   // This reference will give us direct access to the mesh
@@ -51,9 +51,6 @@ const Scene = props => {
 	const generateConfigs = (unconfigured) => {
 		let ids = [];
 		let configured = unconfigured.map( (char)=> {
-			let colors = ['blue', 'green', 'orange', 'red'];
-			let pool = [true, false, false, true, true, false];
-
 			//generate IDs
 			let id = Math.floor( (1000**Math.random()*1000**Math.random()) * (10**10) )
 			while(ids.indexOf(id)>-1){
@@ -62,9 +59,11 @@ const Scene = props => {
 			ids.push(id);
 
 			//config parameters
+			let colors = ['blue', 'green', 'orange', 'red'];
+			let pool = [true, false];
 			let active = pool[Math.floor(Math.random()*( pool.length))]
 			let value = char;
-			let max = 10;
+			let max = 7;
 			let position = [];
 			let i = 0;
 			while(i<3){ //3 for x,y,z
@@ -73,14 +72,16 @@ const Scene = props => {
 				position.push(coordinate)
 				i++;
 			}
+			
 			let color = colors[Math.floor(Math.random()*colors.length )]
 			let scale = [
-				1*Math.floor(2*Math.random())+1, 
-				1*Math.floor(2*Math.random())+1, 
-				1*Math.floor(2*Math.random())+1
+				2*Math.floor(2*Math.random())+1, 
+				2*Math.floor(2*Math.random())+1, 
+				2*Math.floor(2*Math.random())+1
 			];
+			console.log(position)
 			return {
-				active: 	active,
+				visible: 	active,
 				color: 		color,
 				key: 		id,
 				position: 	position,
@@ -92,9 +93,8 @@ const Scene = props => {
 	};
 
 	const rotateLetters = () => {
-		let rotated = sceneState.letterConfigs.map( (letter)=>{
-			let spin = Math.floor(5*Math.random()+1)
-			letter.position = letter.position.map( (m)=>{ return m+spin })
+		let rotated = sceneState.letters.map( (letter)=>{
+			console.log('letter', letter)
 			return letter;
 		});
 		return setSceneState({'letterConfigs':rotated})
@@ -103,7 +103,7 @@ const Scene = props => {
 	const getLetters = (configs) => { 
 			configs = (configs) ? configs : sceneState.letterConfigs;
 			return configs.map( (config) => {
-				return <Letter {...config}/>
+				return <Letter position={[5,5,-10]} {...config}/>
 			})
 	};
 	const text = `
@@ -122,6 +122,7 @@ const Scene = props => {
 
 	let scene = useRef()
 	let letters = getLetters()
+	console.log('letters', letters)
 	return (
 		<scene>
 		{letters}

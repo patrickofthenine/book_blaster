@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 function Letter(props){
+	let letter = useRef()
 	let mesh = (
-		<letter {...props}>
-			<boxBufferGeometry attach="geometry" args={props.scale}/>
-		</letter>
+		<mesh ref={letter} {...props}>
+			<boxBufferGeometry attach="geometry" args={[1,1,1]}/>
+		</mesh>
 	)
 	return <mesh/>
 };
