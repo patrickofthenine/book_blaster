@@ -1,9 +1,28 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useFrame } from 'react-three-fiber';
-import Letters from '../Letters/Letters';
+import Letter from '../Letters/Letter/Letter';
 
-const Scene = () => {
+function Box(props) {
+  // This reference will give us direct access to the mesh
+  const mesh = useRef()
+  
+  // Set up state for the hovered and active state
+  const [hovered, setHover] = useState(false)
+  const [active, setActive] = useState(false)
+  
+  // Rotate mesh every frame, this is outside of React without overhead
+  useFrame(() => (mesh.current.rotation.x = mesh.current.rotation.y += 0.01))
+  
+  return (
+    <mesh
+      ref={mesh}
+      onPointerOut={e => setHover(false)}>
+      <boxBufferGeometry attach="geometry" args={[2, 2, 2]} />
+    </mesh>
+  )
+}
 
+const Scene = props => {
 	const getGroupings = (blob) => {
 		blob = ( typeof(blob) === 'string' ) ? blob : false;
 		return blob
@@ -45,7 +64,7 @@ const Scene = () => {
 			//config parameters
 			let active = pool[Math.floor(Math.random()*( pool.length))]
 			let value = char;
-			let max = window.innerHeight * window.innerWidth;
+			let max = 10;
 			let position = [];
 			let i = 0;
 			while(i<3){ //3 for x,y,z
@@ -63,7 +82,7 @@ const Scene = () => {
 			return {
 				active: 	active,
 				color: 		color,
-				id: 		id,
+				key: 		id,
 				position: 	position,
 				scale: 		scale,
 				value: 		value,
@@ -72,35 +91,41 @@ const Scene = () => {
 		return configured;
 	};
 
-	const rotateMeshes = () => {
-		let rotated = sceneState.letters.map( (mesh)=>{
+	const rotateLetters = () => {
+		let rotated = sceneState.letterConfigs.map( (letter)=>{
 			let spin = Math.floor(5*Math.random()+1)
-			mesh.position = mesh.position.map( (m)=>{ return m+spin })
-			return mesh;
+			letter.position = letter.position.map( (m)=>{ return m+spin })
+			return letter;
 		});
-		return setSceneState({'letters':rotated})
+		return setSceneState({'letterConfigs':rotated})
 	};
 
+	const getLetters = (configs) => { 
+			configs = (configs) ? configs : sceneState.letterConfigs;
+			return configs.map( (config) => {
+				return <Letter {...config}/>
+			})
+	};
 	const text = `
 		CHAPTER 1. Loomings.
-		Call me Ishmael. Some years ago—never mind how long precisely—having
-		little or no money in my purse, and nothing particular to interest me
-		on shore, I thought I would sail about a little and see the watery part
-		of the world. It is a way I have of driving off the spleen and
-		regulating the circulation.
+		Call me Ishmael. 
 	`;
 
-	const singles 	= generateConfigs(getSingles(text));
-
+	const startupConfigs = generateConfigs(getSingles(text));
+	const startupLetters = getLetters(startupConfigs);
 	const [sceneState, setSceneState] = useState({
-		letters: singles
-
+		letterConfigs: startupConfigs,
+		letters: startupLetters
 	});
-	useFrame( ()=>{ rotateMeshes() })
+
+	useFrame( ()=>{ rotateLetters() });
+
+	let scene = useRef()
+	let letters = getLetters()
 	return (
-		<ambientLight>
-		{sceneState.letters}
-		</ambientLight>
+		<scene>
+		{letters}
+		</scene>
 	)
 }
 
