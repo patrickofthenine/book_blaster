@@ -92,13 +92,20 @@ const Scene = props => {
 	};
 
 	const getLetters = (configs) => { 
-			return configs.map( (config) => {
-				return <Letter {...config}/>
-			})
+		configs = (configs) ? configs : sceneState.letters
+		return configs.map( (config) => {
+			return <Letter {...config}/>
+		})
 	};
 
 	const updateLetters = () => {
-		let letters = ''
+		let letters = getLetters()
+		let updated = letters.map( (letter)=>{
+			/*
+			* 
+			*/
+		})	
+		return setSceneState({letters:updated})
 	}
 
 	const text = `
@@ -107,18 +114,16 @@ const Scene = props => {
 	`;
 
 	const startupConfigs = generateConfigs(getSingles(text));
-	const letters = getLetters(startupConfigs);
 	
+	let letters = getLetters(startupConfigs);
 	const [sceneState, setSceneState] = useState({
 		letters: letters
 	});
-
-	//useFrame( ()=>{ rotateLetters() });
-
+	
 	let scene = useRef()
+	useFrame( ()=>{ updateLetters() } )
 	return (
 		<scene>
-		<Box/>
 		{sceneState.letters}
 		</scene>
 	)
