@@ -65,7 +65,7 @@ const App = props => {
 				color: 		color,
 				key: 		id,
 				position: 	position,
-				scale: 		[2,2,2],
+				scale: 		scale,
 				value: 		value,
 			};
 		});

@@ -1,10 +1,11 @@
 import React from 'react'
 
 function Letter(props){
-	console.log('props', props.scale)
 	let mesh = (
-		<mesh {...props}>
-			<boxBufferGeometry attach="geometry" args={[2,2,2]}/>
+		<mesh 
+			position={props.position}
+		{...props}>
+			<boxBufferGeometry attach="geometry" args={props.scale}/>
 		</mesh>
 	)
 	return <mesh/>
